@@ -3,81 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频分享 - 首页</title>
+    <title>视频网站 - 首页</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-            background-color: #f0f2f5;
+            background-color: #f5f5f5;
         }
         .category-card {
             transition: all 0.3s ease;
         }
         .category-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body class="font-sans">
     <!-- 导航栏 -->
     <nav class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-blue-600">
-                <i class="fa-solid fa-clapperboard mr-2"></i>视频小屋
-            </h1>
-            <a href="index.html" class="text-blue-600 hover:text-blue-800 font-medium">
-                <i class="fa-solid fa-home mr-1"></i>首页
-            </a>
+        <div class="container mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold text-gray-800 text-center">视频分享平台</h1>
         </div>
     </nav>
 
-    <!-- 分类主区域 -->
-    <main class="container mx-auto px-4 py-12">
-        <h2 class="text-3xl font-bold text-center mb-10 text-gray-800">选择视频分类</h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- 分类1：科技 -->
-            <a href="category.html?type=tech" class="category-card">
-                <div class="bg-white rounded-xl p-6 text-center">
-                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fa-solid fa-microchip text-3xl text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-800">科技</h3>
-                    <p class="text-gray-500 mt-2">24 个视频</p>
+    <!-- 分类区域 -->
+    <main class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-700">选择分类</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+            <!-- 分类1：电影 -->
+            <a href="category.html?type=movie" class="category-card">
+                <div class="bg-white rounded-xl p-8 text-center">
+                    <h3 class="text-2xl font-semibold text-gray-800">电影</h3>
                 </div>
             </a>
 
-            <!-- 分类2：生活 -->
-            <a href="category.html?type=life" class="category-card">
-                <div class="bg-white rounded-xl p-6 text-center">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fa-solid fa-leaf text-3xl text-green-600"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-800">生活</h3>
-                    <p class="text-gray-500 mt-2">32 个视频</p>
-                </div>
-            </a>
-
-            <!-- 分类3：美食 -->
-            <a href="category.html?type=food" class="category-card">
-                <div class="bg-white rounded-xl p-6 text-center">
-                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fa-solid fa-utensils text-3xl text-red-600"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-800">美食</h3>
-                    <p class="text-gray-500 mt-2">18 个视频</p>
-                </div>
-            </a>
-
-            <!-- 分类4：游戏 -->
-            <a href="category.html?type=game" class="category-card">
-                <div class="bg-white rounded-xl p-6 text-center">
-                    <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fa-solid fa-gamepad text-3xl text-purple-600"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-800">游戏</h3>
-                    <p class="text-gray-500 mt-2">45 个视频</p>
+            <!-- 分类2：电视剧 -->
+            <a href="category.html?type=tv" class="category-card">
+                <div class="bg-white rounded-xl p-8 text-center">
+                    <h3 class="text-2xl font-semibold text-gray-800">电视剧</h3>
                 </div>
             </a>
         </div>
@@ -86,7 +50,7 @@
     <!-- 页脚 -->
     <footer class="bg-gray-800 text-white py-6">
         <div class="container mx-auto px-4 text-center">
-            <p>© 2025 视频小屋 - 极简视频播放平台</p>
+            <p>© 2025 视频分享平台</p>
         </div>
     </footer>
 </body>
