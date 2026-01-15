@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的草逼视频</title>
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
@@ -9,6 +10,9 @@
             min-height: 100vh;
             padding: 20px;
             font-family: "微软雅黑", sans-serif;
+            overflow-x: hidden;
+            /* 平滑滚动 */
+            scroll-behavior: smooth;
         }
         .container {
             max-width: 800px;
@@ -16,61 +20,320 @@
             background: white;
             padding: 25px;
             border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            padding-top: 30px;
         }
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 1.6em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .video-list {
+
+        /* 新增：顶部固定导航栏（快速定位视频） */
+        .video-nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            z-index: 100;
+            overflow-x: auto;
+        }
+        .nav-list {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            list-style: none;
         }
-        .video-btn {
-            padding: 8px 15px;
+        .nav-item a {
+            display: block;
+            padding: 6px 12px;
+            color: #185a9d;
+            text-decoration: none;
+            font-size: 0.9em;
+            border-radius: 4px;
+            background: #f0f8ff;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .nav-item a:hover {
+            background: #e6f7ff;
+        }
+
+        .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .video-item {
+            width: 100%;
+            border-radius: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            transition: box-shadow 0.3s;
+            /* 新增：视频ID锚点定位 */
+            scroll-margin-top: 80px;
+        }
+        .video-item:hover {
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        .video-title {
+            color: #185a9d;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .video-title::before {
+            content: "📹";
+            font-size: 0.9em;
+        }
+
+        /* 新增：视频控制栏（音量+播放速度） */
+        .video-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+            padding-left: 2px;
+        }
+        .control-btn {
             border: none;
-            background: #43cea2;
-            color: white;
-            border-radius: 8px;
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s;
         }
-        .video-btn:hover {
-            background: #185a9d;
+        .control-btn:hover {
+            background: #dee2e6;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #00000010;
         }
         video {
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            height: 100%;
+            object-fit: cover;
+            playsinline;
+            /* 新增：防止双击全屏（误触优化） */
+            pointer-events: auto;
+        }
+        .loading-tip {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 0.9em;
+        }
+        .error-tip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fef2f2;
+            color: #dc2626;
+            font-size: 0.9em;
+            padding: 20px;
+            text-align: center;
+        }
+        .error-link {
+            margin-top: 8px;
+            color: #185a9d;
+            text-decoration: none;
+            font-size: 0.85em;
+        }
+
+        /* 新增：回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #185a9d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(24, 90, 157, 0.3);
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .back-to-top.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .bottom-space {
+            height: 40px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.4em;
+            }
+            .video-item {
+                padding: 12px;
+            }
+            .back-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 36px;
+                height: 36px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>我的草逼视频</h1>
-        <!-- 视频切换按钮（国内免VPN访问） -->
-        <div class="video-list">
-            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/290142798873061883.mp4')">视频1</button>
-            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/2097965388039600665.mp4')">视频2</button>
+
+        <!-- 新增：视频导航栏（快速跳转到对应视频） -->
+        <nav class="video-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#video1">视频1</a></li>
+                <li class="nav-item"><a href="#video2">视频2</a></li>
+                <li class="nav-item"><a href="#video3">视频3（预留）</a></li>
+            </ul>
+        </nav>
+
+        <div class="video-grid">
+            <!-- 视频1：新增ID用于锚点定位 -->
+            <div class="video-item" id="video1">
+                <div class="video-title">视频1：XXX内容（可修改）</div>
+                <div class="video-wrapper">
+                    <video controls playsinline onloadeddata="this.previousElementSibling.style.display='none'">
+                        <source src="https://Ljx991009.github.io/290142798873061883.mp4" type="video/mp4">
+                        <div class="error-tip">
+                            视频播放失败 😭
+                            <a href="https://Ljx991009.github.io/290142798873061883.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
+                        </div>
+                    </video>
+                    <div class="loading-tip">视频加载中... 🌀</div>
+                </div>
+                <!-- 新增：视频控制按钮 -->
+                <div class="video-controls">
+                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
+                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
+                </div>
+            </div>
+
+            <!-- 视频2 -->
+            <div class="video-item" id="video2">
+                <div class="video-title">视频2：XXX内容（可修改）</div>
+                <div class="video-wrapper">
+                    <video controls playsinline onloadeddata="this.previousElementSibling.style.display='none'">
+                        <source src="https://Ljx991009.github.io/2097965388039600665.mp4" type="video/mp4">
+                        <div class="error-tip">
+                            视频播放失败 😭
+                            <a href="https://Ljx991009.github.io/2097965388039600665.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
+                        </div>
+                    </video>
+                    <div class="loading-tip">视频加载中... 🌀</div>
+                </div>
+                <div class="video-controls">
+                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
+                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
+                </div>
+            </div>
+
+            <!-- 视频3（预留模板） -->
+            <div class="video-item" id="video3">
+                <div class="video-title">视频3：你的新视频标题</div>
+                <div class="video-wrapper">
+                    <video controls playsinline onloadeddata="this.previousElementSibling.style.display='none'">
+                        <source src="你的视频链接.mp4" type="video/mp4">
+                        <div class="error-tip">
+                            视频播放失败 😭
+                            <a href="你的视频链接.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
+                        </div>
+                    </video>
+                    <div class="loading-tip">视频加载中... 🌀</div>
+                </div>
+                <div class="video-controls">
+                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
+                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
+                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
+                </div>
+            </div>
         </div>
-        <!-- 视频播放器 -->
-        <video id="mainVideo" controls>
-            <source src="https://Ljx991009.github.io/290142798873061883.mp4" type="video/mp4">
-            浏览器不支持播放
-        </video>
+
+        <div class="bottom-space"></div>
     </div>
 
+    <!-- 新增：回到顶部按钮 -->
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">🔝</button>
+
     <script>
-        function changeVideo(url) {
-            const video = document.getElementById('mainVideo');
-            const source = video.querySelector('source');
-            source.src = url;
-            video.load();
-            video.play();
+        // 1. 音量调节功能
+        function adjustVolume(btn, volume) {
+            const video = btn.closest('.video-item').querySelector('video');
+            video.volume = volume;
+            // 高亮当前选中的音量按钮
+            const volumeBtns = btn.parentElement.querySelectorAll('.control-btn');
+            volumeBtns.forEach(b => b.style.background = b === btn ? '#185a9d' : '#e9ecef');
+            volumeBtns.forEach(b => b.style.color = b === btn ? 'white' : '#495057');
         }
+
+        // 2. 播放速度调节功能
+        function adjustPlaybackRate(btn, rate) {
+            const video = btn.closest('.video-item').querySelector('video');
+            video.playbackRate = rate;
+            // 高亮当前选中的倍速按钮
+            const rateBtns = btn.parentElement.querySelectorAll('.control-btn');
+            rateBtns.forEach(b => b.style.background = b === btn ? '#185a9d' : '#e9ecef');
+            rateBtns.forEach(b => b.style.color = b === btn ? 'white' : '#495057');
+        }
+
+        // 3. 回到顶部按钮显示/隐藏
+        window.addEventListener('scroll', () => {
+            const backToTopBtn = document.querySelector('.back-to-top');
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        // 4. 优化：点击视频控制按钮时不暂停视频
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        });
     </script>
 </body>
 </html>
