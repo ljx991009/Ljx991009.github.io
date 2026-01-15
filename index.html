@@ -1,76 +1,385 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {margin: 0; padding: 0; box-sizing: border-box;}
-        body {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            min-height: 100vh;
-            padding: 20px;
-            font-family: "微软雅黑", sans-serif;
+    <title>Wave - 视频分享平台</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- 自定义 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6', // 主色调：蓝色
+                        secondary: '#10B981', // 辅助色：绿色
+                        dark: '#1E293B', // 深色
+                        light: '#F8FAFC', // 浅色
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .video-list {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .video-btn {
-            padding: 8px 15px;
-            border: none;
-            background: #43cea2;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .video-btn:hover {
-            background: #185a9d;
-        }
-        video {
-            width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .video-card-hover {
+                @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .btn-primary {
+                @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/90 transition-all;
+            }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>我的草逼视频</h1>
-        <!-- 视频切换按钮（国内免VPN访问） -->
-        <div class="video-list">
-            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/290142798873061883.mp4')">视频1</button>
-            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/2097965388039600665.mp4')">视频2</button>
+<body class="font-inter bg-gray-50 text-dark">
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2">
+                <i class="fa-solid fa-wave-square text-primary text-2xl"></i>
+                <span class="text-xl font-bold">Wave</span>
+            </a>
+
+            <!-- 搜索栏 - 桌面端 -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <input type="text" placeholder="搜索视频、用户或话题..." class="w-full px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+                <button class="bg-primary text-white px-4 py-2 rounded-r-lg">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div class="flex items-center gap-4">
+                <button class="hidden md:block btn-primary">
+                    <i class="fa-solid fa-upload mr-2"></i>上传视频
+                </button>
+                <button class="md:hidden btn-primary">
+                    <i class="fa-solid fa-upload"></i>
+                </button>
+                <a href="#" class="text-gray-600 hover:text-primary transition-colors">
+                    <i class="fa-solid fa-bell text-xl"></i>
+                </a>
+                <div class="relative">
+                    <img src="https://picsum.photos/id/64/40/40" alt="用户头像" class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                </div>
+            </div>
         </div>
-        <!-- 视频播放器 -->
-        <video id="mainVideo" controls>
-            <source src="https://Ljx991009.github.io/290142798873061883.mp4" type="video/mp4">
-            浏览器不支持播放
-        </video>
+        <!-- 搜索栏 - 移动端 -->
+        <div class="md:hidden px-4 pb-3">
+            <input type="text" placeholder="搜索..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50">
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 分类标签 -->
+        <div class="flex overflow-x-auto pb-4 mb-8 gap-2 scrollbar-hide">
+            <button class="whitespace-nowrap px-4 py-2 bg-primary text-white rounded-full">推荐</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">科技</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">生活</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">美食</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">游戏</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">音乐</button>
+            <button class="whitespace-nowrap px-4 py-2 bg-white hover:bg-gray-100 rounded-full transition-colors">教育</button>
+        </div>
+
+        <!-- 视频列表 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- 视频卡片 1 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/1/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">10:24</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/64/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">如何使用 Tailwind CSS 快速构建响应式网站</h3>
+                            <p class="text-gray-500 text-sm mt-1">前端技术</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>12.5万 次观看</span>
+                                <span>•</span>
+                                <span>3天前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频卡片 2 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/96/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">05:42</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/22/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">新手摄影入门教程：掌握这5个技巧拍出大片</h3>
+                            <p class="text-gray-500 text-sm mt-1">摄影美学</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>8.7万 次观看</span>
+                                <span>•</span>
+                                <span>1周前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频卡片 3 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/292/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">15:30</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/23/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">Vlog：我的日本东京旅行日记 | 美食与景点推荐</h3>
+                            <p class="text-gray-500 text-sm mt-1">旅行日记</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>25.3万 次观看</span>
+                                <span>•</span>
+                                <span>2周前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频卡片 4 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/119/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">08:45</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/45/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">家常美食：超简单的番茄牛腩做法，软烂入味</h3>
+                            <p class="text-gray-500 text-sm mt-1">美食教程</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>18.9万 次观看</span>
+                                <span>•</span>
+                                <span>1个月前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频卡片 5 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/160/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">22:10</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/54/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">游戏攻略：塞尔达传说 王国之泪 全神庙收集指南</h3>
+                            <p class="text-gray-500 text-sm mt-1">游戏解说</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>36.2万 次观看</span>
+                                <span>•</span>
+                                <span>2个月前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频卡片 6 -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-md video-card-hover">
+                <div class="relative">
+                    <img src="https://picsum.photos/id/366/600/338" alt="视频封面" class="w-full h-48 object-cover">
+                    <span class="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1 rounded">12:05</span>
+                    <button class="absolute top-2 right-2 bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/40 transition-colors">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="flex gap-3">
+                        <img src="https://picsum.photos/id/65/40/40" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <h3 class="font-semibold line-clamp-2">健身打卡：30分钟居家全身燃脂训练 | 无器械</h3>
+                            <p class="text-gray-500 text-sm mt-1">健身运动</p>
+                            <div class="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                <span>14.7万 次观看</span>
+                                <span>•</span>
+                                <span>3个月前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载更多 -->
+        <div class="mt-12 text-center">
+            <button class="btn-secondary px-8">
+                <i class="fa-solid fa-spinner mr-2"></i>加载更多
+            </button>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12 mt-20">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-wave-square text-primary text-2xl"></i>
+                        <span class="text-xl font-bold">Wave</span>
+                    </div>
+                    <p class="text-gray-400">分享每一个精彩瞬间，发现更多有趣的视频内容。</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">关于我们</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">公司介绍</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">联系我们</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">加入我们</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">帮助中心</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">用户指南</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">常见问题</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">版权投诉</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">关注我们</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa-solid fa-weibo"></i>
+                        </a>
+                        <a href="#" class="bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa-solid fa-wechat"></i>
+                        </a>
+                        <a href="#" class="bg-gray-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa-solid fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500">
+                <p>© 2025 Wave 视频分享平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 视频播放模态框 (默认隐藏) -->
+    <div id="videoModal" class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center hidden">
+        <div class="bg-dark rounded-xl overflow-hidden w-full max-w-4xl">
+            <div class="p-4 flex justify-between items-center border-b border-gray-700">
+                <h3 class="text-white text-lg font-semibold">视频标题</h3>
+                <button id="closeModal" class="text-white hover:text-gray-300 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="aspect-video w-full">
+                <video controls class="w-full h-full object-contain">
+                    <source src="" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+            </div>
+            <div class="p-4 text-white">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-xl font-bold">如何使用 Tailwind CSS 快速构建响应式网站</h4>
+                    <div class="flex gap-4">
+                        <button class="flex items-center gap-2 hover:text-primary transition-colors">
+                            <i class="fa-solid fa-heart"></i>
+                            <span>1.2万</span>
+                        </button>
+                        <button class="flex items-center gap-2 hover:text-primary transition-colors">
+                            <i class="fa-solid fa-comment"></i>
+                            <span>342</span>
+                        </button>
+                        <button class="flex items-center gap-2 hover:text-primary transition-colors">
+                            <i class="fa-solid fa-share"></i>
+                            <span>分享</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-3 items-center mb-4">
+                    <img src="https://picsum.photos/id/64/40/40" alt="作者头像" class="w-12 h-12 rounded-full object-cover">
+                    <div>
+                        <p class="font-semibold">前端技术</p>
+                        <p class="text-gray-400 text-sm">120万 粉丝</p>
+                    </div>
+                    <button class="ml-auto btn-primary">关注</button>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <p class="text-gray-300">这是一个关于 Tailwind CSS 的入门教程，帮助你快速掌握这个强大的 CSS 框架，构建美观的响应式网站。</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        function changeVideo(url) {
-            const video = document.getElementById('mainVideo');
-            const source = video.querySelector('source');
-            source.src = url;
-            video.load();
-            video.play();
-        }
+        // 模态框控制
+        const videoModal = document.getElementById('videoModal');
+        const closeModal = document.getElementById('closeModal');
+        const videoCards = document.querySelectorAll('.video-card-hover');
+
+        // 打开模态框
+        videoCards.forEach(card => {
+            card.addEventListener('click', () => {
+                videoModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // 禁止背景滚动
+            });
+        });
+
+        // 关闭模态框
+        closeModal.addEventListener('click', () => {
+            videoModal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // 恢复背景滚动
+        });
+
+        // 点击模态框背景关闭
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        });
     </script>
 </body>
 </html>
