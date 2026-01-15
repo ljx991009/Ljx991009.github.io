@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的草逼视频</title>
+    <title>我的视频</title>
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
@@ -10,8 +10,6 @@
             min-height: 100vh;
             padding: 20px;
             font-family: "微软雅黑", sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
         }
         .container {
             max-width: 800px;
@@ -19,404 +17,56 @@
             background: white;
             padding: 25px;
             border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            padding-top: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 1.6em;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .video-nav {
-            position: sticky;
-            top: 0;
-            background: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
-            z-index: 100;
-            overflow-x: auto;
-        }
-        .nav-list {
-            display: flex;
-            gap: 10px;
-            list-style: none;
-        }
-        .nav-item a {
-            display: block;
-            padding: 6px 12px;
-            color: #185a9d;
-            text-decoration: none;
-            font-size: 0.9em;
-            border-radius: 4px;
-            background: #f0f8ff;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-        .nav-item a:hover {
-            background: #e6f7ff;
-        }
-        .video-grid {
+        .video-list {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 20px;
         }
         .video-item {
             width: 100%;
-            border-radius: 12px;
-            padding: 15px;
-            background: #f8f9fa;
-            transition: box-shadow 0.3s;
-            scroll-margin-top: 80px;
-        }
-        .video-item:hover {
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
         .video-title {
             color: #185a9d;
             font-size: 1.1em;
-            margin-bottom: 10px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .video-title::before {
-            content: "📹";
-            font-size: 0.9em;
-        }
-        .video-controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 8px;
-            padding-left: 2px;
-        }
-        .control-btn {
-            border: none;
-            background: #e9ecef;
-            color: #495057;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .control-btn:hover {
-            background: #dee2e6;
-        }
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #00000010;
+            margin-bottom: 8px;
         }
         video {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             playsinline;
-            pointer-events: auto;
-        }
-        /* 优化：加载进度条 */
-        .loading-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .loading-bar {
-            width: 60%;
-            height: 6px;
-            background: #e0e0e0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .loading-progress {
-            width: 0%;
-            height: 100%;
-            background: #185a9d;
-            transition: width 0.2s;
-        }
-        .loading-text {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .error-tip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #fef2f2;
-            color: #dc2626;
-            font-size: 0.9em;
-            padding: 20px;
-            text-align: center;
-        }
-        .error-link {
-            margin-top: 8px;
-            color: #185a9d;
-            text-decoration: none;
-            font-size: 0.85em;
-        }
-        /* 优化：重试按钮 */
-        .retry-btn {
-            margin-top: 10px;
-            padding: 6px 12px;
-            border: none;
-            background: #185a9d;
-            color: white;
-            border-radius: 4px;
-            font-size: 0.85em;
-            cursor: pointer;
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #185a9d;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(24, 90, 157, 0.3);
-            transition: opacity 0.3s, transform 0.3s;
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
-            z-index: 1000;
-        }
-        .back-to-top.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .bottom-space {
-            height: 40px;
-        }
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.4em;
-            }
-            .video-item {
-                padding: 12px;
-            }
-            .back-to-top {
-                bottom: 20px;
-                right: 20px;
-                width: 36px;
-                height: 36px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>我的草逼视频</h1>
-        <nav class="video-nav">
-            <ul class="nav-list">
-                <li class="nav-item"><a href="#video1">视频1</a></li>
-                <li class="nav-item"><a href="#video2">视频2</a></li>
-                <li class="nav-item"><a href="#video3">视频3（预留）</a></li>
-            </ul>
-        </nav>
-        <div class="video-grid">
+        <h1>我的视频</h1>
+        <div class="video-list">
             <!-- 视频1 -->
-            <div class="video-item" id="video1">
-                <div class="video-title">视频1：XXX内容（可修改）</div>
-                <div class="video-wrapper">
-                    <video controls playsinline onprogress="updateLoadingProgress(this)" onloadeddata="hideLoading(this)">
-                        <source src="你的天翼云盘直链1?attname=视频1.mp4" type="video/mp4">
-                        <div class="error-tip">
-                            视频加载失败 😭
-                            <button class="retry-btn" onclick="retryLoadVideo(this)">重试加载</button>
-                            <a href="你的天翼云盘直链1?attname=视频1.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
-                        </div>
-                    </video>
-                    <div class="loading-container">
-                        <div class="loading-bar">
-                            <div class="loading-progress"></div>
-                        </div>
-                        <div class="loading-text">视频加载中... 0%</div>
-                    </div>
-                </div>
-                <div class="video-controls">
-                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
-                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
-                </div>
+            <div class="video-item">
+                <div class="video-title">视频1</div>
+                <video controls>
+                    <source src="你的天翼云盘直链1?attname=视频1.mp4" type="video/mp4">
+                    浏览器不支持播放
+                </video>
             </div>
             <!-- 视频2 -->
-            <div class="video-item" id="video2">
-                <div class="video-title">视频2：XXX内容（可修改）</div>
-                <div class="video-wrapper">
-                    <video controls playsinline onprogress="updateLoadingProgress(this)" onloadeddata="hideLoading(this)">
-                        <source src="你的天翼云盘直链2?attname=视频2.mp4" type="video/mp4">
-                        <div class="error-tip">
-                            视频加载失败 😭
-                            <button class="retry-btn" onclick="retryLoadVideo(this)">重试加载</button>
-                            <a href="你的天翼云盘直链2?attname=视频2.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
-                        </div>
-                    </video>
-                    <div class="loading-container">
-                        <div class="loading-bar">
-                            <div class="loading-progress"></div>
-                        </div>
-                        <div class="loading-text">视频加载中... 0%</div>
-                    </div>
-                </div>
-                <div class="video-controls">
-                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
-                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
-                </div>
+            <div class="video-item">
+                <div class="video-title">视频2</div>
+                <video controls>
+                    <source src="你的天翼云盘直链2?attname=视频2.mp4" type="video/mp4">
+                    浏览器不支持播放
+                </video>
             </div>
-            <!-- 视频3 -->
-            <div class="video-item" id="video3">
-                <div class="video-title">视频3：你的新视频标题</div>
-                <div class="video-wrapper">
-                    <video controls playsinline onprogress="updateLoadingProgress(this)" onloadeddata="hideLoading(this)">
-                        <source src="你的天翼云盘直链3?attname=视频3.mp4" type="video/mp4">
-                        <div class="error-tip">
-                            视频加载失败 😭
-                            <button class="retry-btn" onclick="retryLoadVideo(this)">重试加载</button>
-                            <a href="你的天翼云盘直链3?attname=视频3.mp4" class="error-link" target="_blank">点击跳转原链接播放</a>
-                        </div>
-                    </video>
-                    <div class="loading-container">
-                        <div class="loading-bar">
-                            <div class="loading-progress"></div>
-                        </div>
-                        <div class="loading-text">视频加载中... 0%</div>
-                    </div>
-                </div>
-                <div class="video-controls">
-                    <button class="control-btn" onclick="adjustVolume(this, 0.5)">音量 50%</button>
-                    <button class="control-btn" onclick="adjustVolume(this, 1)">音量 100%</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1.25)">1.25倍速</button>
-                    <button class="control-btn" onclick="adjustPlaybackRate(this, 1)">正常速度</button>
-                </div>
-            </div>
+            <!-- 新增视频：复制上面的.video-item块，替换链接和标题 -->
         </div>
-        <div class="bottom-space"></div>
     </div>
-    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">🔝</button>
-    <script>
-        // 1. 音量调节
-        function adjustVolume(btn, volume) {
-            const video = btn.closest('.video-item').querySelector('video');
-            video.volume = volume;
-            const volumeBtns = btn.parentElement.querySelectorAll('.control-btn');
-            volumeBtns.forEach(b => b.style.background = b === btn ? '#185a9d' : '#e9ecef');
-            volumeBtns.forEach(b => b.style.color = b === btn ? 'white' : '#495057');
-        }
-        // 2. 倍速调节
-        function adjustPlaybackRate(btn, rate) {
-            const video = btn.closest('.video-item').querySelector('video');
-            video.playbackRate = rate;
-            const rateBtns = btn.parentElement.querySelectorAll('.control-btn');
-            rateBtns.forEach(b => b.style.background = b === btn ? '#185a9d' : '#e9ecef');
-            rateBtns.forEach(b => b.style.color = b === btn ? 'white' : '#495057');
-        }
-        // 3. 回到顶部
-        window.addEventListener('scroll', () => {
-            const backToTopBtn = document.querySelector('.back-to-top');
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('show');
-            } else {
-                backToTopBtn.classList.remove('show');
-            }
-            // 优化：预加载下一个视频
-            preloadNextVideo();
-        });
-        // 4. 加载进度显示
-        function updateLoadingProgress(video) {
-            const loadingContainer = video.nextElementSibling;
-            const progressBar = loadingContainer.querySelector('.loading-progress');
-            const progressText = loadingContainer.querySelector('.loading-text');
-            if (video.buffered.length > 0) {
-                const percent = (video.buffered.end(0) / video.duration) * 100;
-                progressBar.style.width = `${percent}%`;
-                progressText.textContent = `视频加载中... ${Math.round(percent)}%`;
-            }
-        }
-        // 5. 隐藏加载状态
-        function hideLoading(video) {
-            video.nextElementSibling.style.display = 'none';
-        }
-        // 6. 加载失败重试
-        function retryLoadVideo(btn) {
-            const video = btn.closest('.video-wrapper').querySelector('video');
-            const loadingContainer = video.nextElementSibling;
-            loadingContainer.style.display = 'flex'; // 显示加载状态
-            loadingContainer.querySelector('.loading-progress').style.width = '0%';
-            loadingContainer.querySelector('.loading-text').textContent = '视频加载中... 0%';
-            video.load(); // 重新加载
-            // 自动重试3次
-            let retryCount = 0;
-            const retryInterval = setInterval(() => {
-                if (retryCount >= 3) {
-                    clearInterval(retryInterval);
-                    return;
-                }
-                if (video.readyState < 2) {
-                    video.load();
-                    retryCount++;
-                } else {
-                    clearInterval(retryInterval);
-                }
-            }, 2000);
-        }
-        // 7. 预加载下一个视频
-        function preloadNextVideo() {
-            const videoItems = document.querySelectorAll('.video-item');
-            videoItems.forEach((item, index) => {
-                const rect = item.getBoundingClientRect();
-                // 当视频进入视口时，预加载下一个视频
-                if (rect.top < window.innerHeight && rect.bottom > 0) {
-                    const nextIndex = index + 1;
-                    if (nextIndex < videoItems.length) {
-                        const nextVideo = videoItems[nextIndex].querySelector('video');
-                        nextVideo.preload = 'auto'; // 预加载
-                    }
-                }
-            });
-        }
-        // 8. 初始化预加载第一个视频的下一个
-        window.addEventListener('load', () => {
-            preloadNextVideo();
-        });
-        // 9. 防止控制按钮触发视频暂停
-        document.querySelectorAll('.control-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-        });
-    </script>
 </body>
 </html>
