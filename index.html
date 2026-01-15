@@ -1,11 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>我的第一个网站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Poppins", "微软雅黑", sans-serif;
+            padding: 20px;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5em;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        /* 响应式视频容器 */
+        .video-wrapper video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        /* 视频控制栏（默认隐藏， hover 显示） */
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 10px 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .video-wrapper:hover .video-controls {
+            opacity: 1;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .desc {
+            margin-top: 20px;
+            color: #333;
+            line-height: 1.7;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .control-btn {
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>网站搭建成功！</h1>
-<p>如果你看到这行字，说明你已经成功上线了。</p>
+    <div class="container">
+        <div class="header">
+            <h1>视频演示页面</h1>
+        </div>
+        <!-- 视频容器：替换 src 为你的视频链接（支持 MP4 格式） -->
+        <div class="video-wrapper">
+            <video id="main-video" controls poster="https://via.placeholder.com/800x450?text=视频封面">
+                <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+                你的浏览器不支持视频播放
+            </video>
+            <div class="video-controls">
+                <button class="control-btn" onclick="document.getElementById('main-video').play()">播放</button>
+                <button class="control-btn" onclick="document.getElementById('main-video').pause()">暂停</button>
+                <button class="control-btn" onclick="document.getElementById('main-video').volume += 0.1">音量+</button>
+                <button class="control-btn" onclick="document.getElementById('main-video').volume -= 0.1">音量-</button>
+            </div>
+        </div>
+        <p class="desc">点击视频区域可显示控制栏，支持播放/暂停、音量调节等操作，页面会自动适配不同设备尺寸。</p>
+    </div>
 </body>
 </html>
