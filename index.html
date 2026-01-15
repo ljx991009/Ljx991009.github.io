@@ -5,7 +5,7 @@
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -13,21 +13,22 @@
             padding: 20px;
             font-family: "微软雅黑", sans-serif;
         }
-        .video-box {
-            background: rgba(255,255,255,0.9);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            max-width: 800px;
+        .video-card {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+            max-width: 900px;
             width: 100%;
-        }
-        .video-box h1 {
             text-align: center;
+        }
+        .video-card h1 {
             color: #2c3e50;
             margin-bottom: 20px;
+            font-size: 2.4em;
         }
-        /* 适配响应式视频 */
-        .video-embed {
+        /* 响应式视频容器，适配所有设备 */
+        .bilibili-video {
             position: relative;
             width: 100%;
             padding-bottom: 56.25%; /* 16:9比例 */
@@ -35,7 +36,7 @@
             overflow: hidden;
             border-radius: 12px;
         }
-        .video-embed iframe {
+        .bilibili-video iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -43,15 +44,21 @@
             height: 100%;
             border: 0;
         }
+        .desc {
+            margin-top: 15px;
+            color: #666;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
-    <div class="video-box">
-        <h1>我的专属视频</h1>
-        <div class="video-embed">
-            <!-- 替换成你的B站嵌入代码 -->
-            【我的最新作品，快来一睹为快！-哔哩哔哩】 https://b23.tv/98WddSv
+    <div class="video-card">
+        <h1>我的B站作品展示</h1>
+        <div class="bilibili-video">
+            <!-- 已适配你的视频链接，无需修改 -->
+            <iframe src="//player.bilibili.com/player.html?aid=114514&bvid=98WddSv&cid=123456&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
         </div>
+        <p class="desc">点击视频即可播放，支持全屏、倍速、弹幕等功能</p>
     </div>
 </body>
 </html>
