@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: "微软雅黑", sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .video-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .video-btn {
+            padding: 8px 15px;
+            border: none;
+            background: #43cea2;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .video-btn:hover {
+            background: #185a9d;
+        }
+        video {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>我的草逼视频</h1>
+        <!-- 视频切换按钮（国内免VPN访问） -->
+        <div class="video-list">
+            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/290142798873061883.mp4')">视频1</button>
+            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/2097965388039600665.mp4')">视频2</button>
+        </div>
+        <!-- 视频播放器 -->
+        <video id="mainVideo" controls>
+            <source src="https://Ljx991009.github.io/290142798873061883.mp4" type="video/mp4">
+            浏览器不支持播放
+        </video>
+    </div>
+
+    <script>
+        function changeVideo(url) {
+            const video = document.getElementById('mainVideo');
+            const source = video.querySelector('source');
+            source.src = url;
+            video.load();
+            video.play();
+        }
+    </script>
+</body>
+</html>
