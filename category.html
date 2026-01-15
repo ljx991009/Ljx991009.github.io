@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的视频</title>
+    <title>内联播放视频列表</title>
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
@@ -23,49 +23,73 @@
             color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
+            font-size: 1.5em;
         }
         .video-list {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
         .video-item {
             width: 100%;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
         }
         .video-title {
             color: #185a9d;
             font-size: 1.1em;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #00000010;
         }
         video {
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            playsinline;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* 适配移动端小屏幕 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .video-item {
+                padding: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>我的视频</h1>
+        <h1>我的内联播放视频</h1>
         <div class="video-list">
             <!-- 视频1 -->
             <div class="video-item">
                 <div class="video-title">视频1</div>
-                <video controls>
-                    <source src="你的天翼云盘直链1?attname=视频1.mp4" type="video/mp4">
-                    浏览器不支持播放
-                </video>
+                <div class="video-wrapper">
+                    <video controls playsinline webkit-playsinline x5-playsinline>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/290142798873061883.mp4" type="video/mp4">
+                        你的浏览器不支持HTML5视频播放
+                    </video>
+                </div>
             </div>
             <!-- 视频2 -->
             <div class="video-item">
                 <div class="video-title">视频2</div>
-                <video controls>
-                    <source src="你的天翼云盘直链2?attname=视频2.mp4" type="video/mp4">
-                    浏览器不支持播放
-                </video>
+                <div class="video-wrapper">
+                    <video controls playsinline webkit-playsinline x5-playsinline>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/2097965388039600665.mp4" type="video/mp4">
+                        你的浏览器不支持HTML5视频播放
+                    </video>
+                </div>
             </div>
-            <!-- 新增视频：复制上面的.video-item块，替换链接和标题 -->
         </div>
     </div>
 </body>
