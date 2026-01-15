@@ -1,112 +1,75 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>视频分类 - <span id="categoryTitle">电影</span></title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: "微软雅黑", sans-serif;
         }
-        .video-item {
-            transition: all 0.2s ease;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
-        .video-item:hover {
-            background-color: #eaeaea;
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .video-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .video-btn {
+            padding: 8px 15px;
+            border: none;
+            background: #43cea2;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .video-btn:hover {
+            background: #185a9d;
+        }
+        video {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
     </style>
 </head>
-<body class="font-sans">
-    <!-- 导航栏 -->
-    <nav class="bg-white shadow-sm sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-800">视频分享平台</h1>
-            <a href="index.html" class="text-blue-600 hover:text-blue-800 font-medium">
-                返回分类
-            </a>
+<body>
+    <div class="container">
+        <h1>我的草逼视频</h1>
+        <!-- 视频切换按钮（国内免VPN访问） -->
+        <div class="video-list">
+            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/290142798873061883.mp4')">视频1</button>
+            <button class="video-btn" onclick="changeVideo('https://Ljx991009.github.io/2097965388039600665.mp4')">视频2</button>
         </div>
-    </nav>
-
-    <!-- 视频播放区域 -->
-    <div class="bg-black py-8">
-        <div class="container mx-auto px-4">
-            <div class="aspect-video bg-black rounded-lg overflow-hidden">
-                <video id="mainVideo" controls class="w-full h-full object-contain">
-                    <source src="" type="video/mp4">
-                    您的浏览器不支持 HTML5 视频播放
-                </video>
-            </div>
-        </div>
+        <!-- 视频播放器 -->
+        <video id="mainVideo" controls>
+            <source src="https://Ljx991009.github.io/290142798873061883.mp4" type="video/mp4">
+            浏览器不支持播放
+        </video>
     </div>
 
-    <!-- 视频列表区域 -->
-    <main class="container mx-auto px-4 py-8">
-        <h3 class="text-2xl font-bold text-gray-700 mb-6" id="listTitle">电影列表</h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="videoList">
-            <!-- 视频列表由JS动态生成 -->
-        </div>
-    </main>
-
-    <!-- 页脚 -->
-    <footer class="bg-gray-800 text-white py-6">
-        <div class="container mx-auto px-4 text-center">
-            <p>© 2025 视频分享平台</p>
-        </div>
-    </footer>
-
     <script>
-        // 视频数据（2个分类：电影、电视剧）
-        const videoData = {
-            movie: [
-                { id: 1, title: "精彩电影片段1", src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4", cover: "https://picsum.photos/id/10/300/170" },
-                { id: 2, title: "精彩电影片段2", src: "https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_5MB.mp4", cover: "https://picsum.photos/id/11/300/170" },
-                { id: 3, title: "精彩电影片段3", src: "https://test-videos.co.uk/vids/elephants/mp4/h264/720/Elephants_720_10s_4MB.mp4", cover: "https://picsum.photos/id/12/300/170" }
-            ],
-            tv: [
-                { id: 4, title: "热门电视剧片段1", src: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4", cover: "https://picsum.photos/id/20/300/170" },
-                { id: 5, title: "热门电视剧片段2", src: "https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_5MB.mp4", cover: "https://picsum.photos/id/21/300/170" },
-                { id: 6, title: "热门电视剧片段3", src: "https://test-videos.co.uk/vids/elephants/mp4/h264/720/Elephants_720_10s_4MB.mp4", cover: "https://picsum.photos/id/22/300/170" }
-            ]
-        };
-
-        // 获取当前分类
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentType = urlParams.get('type') || 'movie';
-
-        // 更新页面标题
-        const typeToName = { movie: '电影', tv: '电视剧' };
-        const currentCategoryName = typeToName[currentType];
-        document.getElementById('categoryTitle').textContent = currentCategoryName;
-        document.getElementById('listTitle').textContent = `${currentCategoryName}列表`;
-
-        // 生成视频列表
-        const videoListElement = document.getElementById('videoList');
-        const mainVideo = document.getElementById('mainVideo');
-        const currentVideos = videoData[currentType];
-
-        // 渲染视频列表
-        currentVideos.forEach(video => {
-            const videoItem = document.createElement('div');
-            videoItem.className = 'video-item bg-white p-3 rounded-lg cursor-pointer';
-            videoItem.innerHTML = `
-                <img src="${video.cover}" alt="${video.title}" class="w-full h-40 object-cover rounded-md mb-2">
-                <h4 class="font-medium text-gray-800 text-center">${video.title}</h4>
-            `;
-
-            // 点击播放视频
-            videoItem.addEventListener('click', () => {
-                mainVideo.src = video.src;
-                mainVideo.play();
-            });
-
-            videoListElement.appendChild(videoItem);
-        });
-
-        // 默认播放第一个视频
-        if (currentVideos.length > 0) {
-            mainVideo.src = currentVideos[0].src;
+        function changeVideo(url) {
+            const video = document.getElementById('mainVideo');
+            const source = video.querySelector('source');
+            source.src = url;
+            video.load();
+            video.play();
         }
     </script>
 </body>
