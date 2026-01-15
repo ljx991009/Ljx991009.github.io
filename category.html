@@ -2,28 +2,41 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>内联播放视频列表</title>
+    <title>我的视频合集</title>
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
             min-height: 100vh;
             padding: 20px;
             font-family: "微软雅黑", sans-serif;
+            scroll-behavior: smooth;
         }
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
             background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            border: 1px solid #f0f8ff;
         }
         h1 {
             color: #2c3e50;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 1.5em;
+            font-size: 1.8em;
+            font-weight: 600;
+            position: relative;
+        }
+        h1::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: #43cea2;
+            margin: 10px auto 0;
+            border-radius: 2px;
         }
         .video-list {
             display: flex;
@@ -32,65 +45,191 @@
         }
         .video-item {
             width: 100%;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 12px;
+            background: #fafdff;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid #e8f4f8;
+            transition: all 0.3s ease;
+        }
+        .video-item:hover {
+            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            transform: translateY(-3px);
+            border-color: #d1efff;
         }
         .video-title {
             color: #185a9d;
             font-size: 1.1em;
-            margin-bottom: 10px;
-            font-weight: 600;
+            margin-bottom: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .video-title::before {
+            content: "📹";
+            font-size: 1em;
+            color: #43cea2;
         }
         .video-wrapper {
             position: relative;
             width: 100%;
             aspect-ratio: 16 / 9;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            background: #00000010;
+            background: #f8f8f8;
+            border: 1px solid #f0f0f0;
         }
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            playsinline: true;
+            webkit-playsinline: true;
+            x5-playsinline: true;
         }
-        /* 适配移动端小屏幕 */
+        .error-tip {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 0.9em;
+            text-align: center;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+        .bottom-space {
+            height: 20px;
+        }
+        /* 响应式适配 */
         @media (max-width: 480px) {
             .container {
-                padding: 15px;
+                padding: 20px;
+                border-radius: 16px;
+            }
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 25px;
+            }
+            .video-list {
+                gap: 20px;
             }
             .video-item {
-                padding: 12px;
+                padding: 15px;
+            }
+            .video-title {
+                font-size: 1em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>我的内联播放视频</h1>
+        <h1>我的视频合集</h1>
         <div class="video-list">
             <!-- 视频1 -->
             <div class="video-item">
-                <div class="video-title">视频1</div>
+                <div class="video-title">视频1：日常记录vlog</div>
                 <div class="video-wrapper">
-                    <video controls playsinline webkit-playsinline x5-playsinline>
+                    <video controls>
                         <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/290142798873061883.mp4" type="video/mp4">
-                        你的浏览器不支持HTML5视频播放
+                        <div class="error-tip">浏览器不支持视频播放</div>
                     </video>
                 </div>
             </div>
             <!-- 视频2 -->
             <div class="video-item">
-                <div class="video-title">视频2</div>
+                <div class="video-title">视频2：美食制作教程</div>
                 <div class="video-wrapper">
-                    <video controls playsinline webkit-playsinline x5-playsinline>
+                    <video controls>
                         <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/2097965388039600665.mp4" type="video/mp4">
-                        你的浏览器不支持HTML5视频播放
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频3 -->
+            <div class="video-item">
+                <div class="video-title">视频3：旅行风景打卡</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频3.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频4 -->
+            <div class="video-item">
+                <div class="video-title">视频4：游戏精彩瞬间</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频4.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频5 -->
+            <div class="video-item">
+                <div class="video-title">视频5：知识分享干货</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频5.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频6 -->
+            <div class="video-item">
+                <div class="video-title">视频6：运动健身教学</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频6.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频7 -->
+            <div class="video-item">
+                <div class="video-title">视频7：音乐翻唱现场</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频7.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频8 -->
+            <div class="video-item">
+                <div class="video-title">视频8：手工制作教程</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频8.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频9 -->
+            <div class="video-item">
+                <div class="video-title">视频9：电影解说点评</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频9.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
+                    </video>
+                </div>
+            </div>
+            <!-- 视频10 -->
+            <div class="video-item">
+                <div class="video-title">视频10：开箱测评体验</div>
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="https://raw.githubusercontent.com/ljx991009/Ljx991009.github.io/main/视频10.mp4" type="video/mp4">
+                        <div class="error-tip">浏览器不支持视频播放</div>
                     </video>
                 </div>
             </div>
         </div>
+        <div class="bottom-space"></div>
     </div>
 </body>
 </html>
